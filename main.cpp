@@ -11,7 +11,7 @@ const char kWindowTitle[] = "LD2B_04_コマツザキ_カガリ_タイトル";
 
 
 // 球
-struct Sphere
+struct Pendulum
 {
 	Vector3 position;// 中心点
 	Vector3 velocity;
@@ -22,7 +22,7 @@ struct Sphere
 
 // プロトタイプ宣言
 //void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
-void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
+void DrawSphere(const Pendulum& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix);
 // X軸回転行列
 Matrix4x4 MakeRotateXMatrix(const Vector3& rotate);
 // Y軸回転行列
@@ -340,7 +340,7 @@ void DrawGrid(const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMa
 }
 
 // Sphereを表示する疑似コード
-void DrawSphere(const Sphere& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
+void DrawSphere(const Pendulum& sphere, const Matrix4x4& viewProjectionMatrix, const Matrix4x4& viewportMatrix)
 {
 	float pi = float(M_PI);
 	const uint32_t kSubdivision = 20;// 分割数
@@ -415,7 +415,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	char keys[256] = { 0 };
 	char preKeys[256] = { 0 };
 
-	Sphere sphere{
+	Pendulum sphere{
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f},
 		{0.0f,0.0f,0.0f},
@@ -429,6 +429,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Vector3 circleCenter = { 0.0f,0.0f,0.0f };
 	float circleRadius = 0.2f;
+
+
+	// start ボタンで開始フラグ
+	bool startFlag = false;
+
 
 	// 画面サイズ
 	float kWindowsWidth = 1280.0f;
@@ -454,6 +459,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓更新処理ここから
 		///
 
+		// start ボタンで開始
+		if (ImGui::Button("Start"))
+		{
+			startFlag = true;
+		}
+
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix({ 1.0f,1.0f,1.0f }, cameraRotate, cameraTranslate);
 
@@ -465,7 +476,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		Matrix4x4 viewportMatrix = MakeViewportMatrix(0, 0, float(kWindowsWidth), float(kWindowsHeight), 0.0f, 1.0f);
 
-
+		
 
 		// 円運動
 		angle += angularVelocity * deltaTime;
@@ -489,10 +500,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			-((float(M_PI) * float(M_PI)) * (sphere.position.z - circleCenter.z)),
 		};
 
-		// 回させる
-		sphere.position.x += sphere.velocity.x;
-		sphere.position.y += sphere.velocity.y;
-		sphere.position.z += sphere.velocity.z;
+
+		if (startFlag)
+		{
+			// 回させる
+			sphere.position.x += sphere.velocity.x;
+			sphere.position.y += sphere.velocity.y;
+			sphere.position.z += sphere.velocity.z;
+		}
 
 
 		///
@@ -509,9 +524,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix);
 
 
-		ImGui::Begin("Windou");
+		/*ImGui::Begin("Windou");
 		ImGui::Button("Start");
-		ImGui::End();
+		ImGui::End();*/
 
 		///
 		/// ↑描画処理ここまで
