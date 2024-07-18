@@ -509,9 +509,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		DrawSphere(sphere, worldViewProjectionMatrix, viewportMatrix);
 
 
-		/*ImGui::Begin("Windou");
-		
-		ImGui::End();*/
+		ImGui::Begin("Windou");
+		ImGui::Button("Start");
+		ImGui::End();
 
 		///
 		/// ↑描画処理ここまで
